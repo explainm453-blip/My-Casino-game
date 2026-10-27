@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royal Casino Games</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #101014;
+  color: white;
+  text-align: center;
+}
+
+header {
+  background: #1c1c24;
+  padding: 22px 10px;
+  border-bottom: 3px solid gold;
+}
+
+header h1 {
+  color: gold;
+  margin: 0 0 10px;
+}
+
+header p {
+  color: #ddd;
+}
+
+.balance {
+  color: #ffe066;
+  font-size: 20px;
+  margin: 20px;
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  padding: 16px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.card {
+  background: #22222c;
+  padding: 22px;
+  border: 1px solid #454550;
+  border-radius: 16px;
+}
+
+.card h2 {
+  color: gold;
+}
+
+.machine {
+  font-size: 45px;
+  margin: 20px 0;
+  letter-spacing: 5px;
+}
+
+button {
+  background: gold;
+  color: #151515;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+button:hover {
+  background: orange;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.result {
+  min-height: 24px;
+  color: #9cffac;
+  margin-top: 14px;
+}
+
+footer {
+  padding: 24px;
+  color: #aaa;
+  font-size: 13px;
+}
+
+#cards {
+  font-size: 30px;
+  margin: 20px 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>👑 ROYAL CASINO</h1>
+  <p>Play • Enjoy • Have Fun</p>
+</header>
+
+<div class="balance">
+  🪙 Demo Coins: <span id="coins">1000</span>
+</div>
+
+<main class="games">
+
+  <section class="card">
+    <h2>🎰 Slot Machine</h2>
+    <p>Play with 50 demo coins</p>
+
+    <div class="machine" id="slots">🍒 🍋 🍇</div>
+
+    <button onclick="playSlots()">SPIN</button>
+
+    <div class="result" id="slotResult"></div>
+  </section>
+
+  <section class="card">
+    <h2>🎲 Dice Game</h2>
+    <p>Choose a number from 1 to 6.</p>
+
+    <select id="guess"
+      style="padding:10px;border-radius:6px;font-size:16px">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+
+    <div class="machine" id="dice">🎲</div>
+
+    <button onclick="playDice()">ROLL</button>
+
+    <div class="result" id="diceResult"></div>
+  </section>
+
+  <section class="card">
+    <h2>🎯 Lucky Number</h2>
+    <p>Guess the number from 1 to 5.</p>
+
+    <select id="luckyGuess"
+      style="padding:10px;border-radius:6px;font-size:16px">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <button onclick="playLucky()">PLAY</button>
+
+    <div class="result" id="luckyResult"></div>
+  </section>
+
+  <section class="card">
+    <h2>🃏 Blackjack</h2>
+    <p>Try to reach 21 without going over.</p>
+
+    <div id="cards">🂠 🂠</div>
+
+    <p>Your Score: <span id="blackjackScore">0</span></p>
+
+    <button onclick="startBlackjack()">NEW GAME</button>
+    <button id="hitButton" onclick="hit()" disabled>HIT</button>
+    <button id="standButton" onclick="stand()" disabled>STAND</button>
+
+    <div class="result" id="blackjackResult"></div>
+  </section>
+
+</main>
+
+<footer>
+  Demo games only • No real-money gambling
+  <br><br>
+  © 2026 Royal Casino Games
+</footer>
+
+<script>
+let coins = 1000;
+
+function updateCoins() {
+  document.getElementById("coins").textContent = coins;
+}
+
+function spend(amount) {
+  if (coins < amount) {
+    alert("Not enough demo coins!");
+    return false;
+  }
+
+  coins -= amount;
+  updateCoins();
+  return true;
+}
+
+function playSlots() {
+  if (!spend(50)) return;
+
+  const symbols = ["🍒", "🍋", "🍇", "🔔", "⭐", "💎"];
+
+  const a = symbols[Math.floor(Math.random() * symbols.length)];
+  const b = symbols[Math.floor(Math.random() * symbols.length)];
+  const c = symbols[Math.floor(Math.random() * symbols.length)];
+
+  document.getElementById("slots").textContent =
+    `${a} ${b} ${c}`;
+
+  let prize = 0;
+
+  if (a === b && b === c) {
+    prize = 250;
+  } else if (a === b || b === c || a === c) {
+    prize = 75;
+  }
+
+  coins += prize;
+  updateCoins();
+
+  document.getElementById("slotResult").textContent =
+    prize ? `You won ${prize} demo coins! 🎉`
+          : "Try again!";
+}
+
+function playDice() {
+  if (!spend(20)) return;
+
+  const rolled = Math.floor(Math.random() * 6) + 1;
+
+  document.getElementById("dice").textContent =
+    ["⚀", "⚁", "⚂", "⚃", "⚄", "⚅"][rolled - 1];
+
+  if (rolled === Number(document.getElementById("guess").value)) {
+    coins += 100;
+    document.getElementById("diceResult").textContent =
+      "Correct! You won 100 demo coins!";
+  } else {
+    document.getElementById("diceResult").textContent =
+      `Dice result: ${rolled}. Try again!`;
+  }
+
+  updateCoins();
+}
+
+function playLucky() {
+  if (!spend(10)) return;
+
+  const number = Math.floor(Math.random() * 5) + 1;
+  const guess = Number(document.getElementById("luckyGuess").value);
+
+  if (number === guess) {
+    coins += 40;
+    document.getElementById("luckyResult").textContent =
+      `Lucky! Number ${number}. You won 40 coins!`;
+  } else {
+    document.getElementById("luckyResult").textContent =
+      `The number was ${number}. Try again!`;
+  }
+
+  updateCoins();
+}
+
+// Simple Blackjack game
+let deck = [];
+let hand = [];
+let dealer = [];
+let gameOver = true;
+
+function createDeck() {
+  const values = [
+    {name:"A", value:11},
+    {name:"2", value:2},
+    {name:"3", value:3},
+    {name:"4", value:4},
+    {name:"5", value:5},
+    {name:"6", value:6},
+    {name:"7", value:7},
+    {name:"8", value:8},
+    {name:"9", value:9},
+    {name:"10", value:10},
+    {name:"J", value:10},
+    {name:"Q", value:10},
+    {name:"K", value:10}
+  ];
+
+  deck = [];
+
+  for (let suit of ["♠", "♥", "♦", "♣"]) {
+    for (let card of values) {
+      deck.push({
+        name: card.name + suit,
+        value: card.value
+      });
+    }
+  }
+
+  deck.sort(() => Math.random() - 0.5);
+}
+
+function drawCard() {
+  return deck.pop();
+}
+
+function total(cards) {
+  let score = cards.reduce((sum, card) => sum + card.value, 0);
+  let aces = cards.filter(card => card.value === 11).length;
+
+  while (score > 21 && aces > 0) {
+    score -= 10;
+    aces--;
+  }
+
+  return score;
+}
+
+function startBlackjack() {
+  if (!spend(25)) return;
+
+  createDeck();
+
+  hand = [drawCard(), drawCard()];
+  dealer = [drawCard(), drawCard()];
+  gameOver = false;
+
+  document.getElementById("blackjackResult").textContent = "";
+  document.getElementById("hitButton").disabled = false;
+  document.getElementById("standButton").disabled = false;
+
+  renderBlackjack();
+}
+
+function renderBlackjack() {
+  document.getElementById("cards").textContent =
+    "You: " + hand.map(c => c.name).join(" ");
+
+  document.getElementById("blackjackScore").textContent =
+    total(hand);
+}
+
+function hit() {
+  if (gameOver) return;
+
+  hand.push(drawCard());
+  renderBlackjack();
+
+  if (total(hand) > 21) {
+    finishBlackjack("Bust! You went over 21.");
+  }
+}
+
+function stand() {
+  if (gameOver) return;
+
+  while (total(dealer) < 17) {
+    dealer.push(drawCard());
+  }
+
+  const playerScore = total(hand);
+  const dealerScore = total(dealer);
+
+  document.getElementById("cards").textContent =
+    "You: " + hand.map(c => c.name).join(" ") +
+    " | Dealer: " + dealer.map(c => c.name).join(" ");
+
+  if (dealerScore > 21 || playerScore > dealerScore) {
+    coins += 50;
+    finishBlackjack("You win! +50 demo coins.");
+  } else if (playerScore === dealerScore) {
+    coins += 25;
+    finishBlackjack("Draw! Your 25 demo coins are returned.");
+  } else {
+    finishBlackjack("Dealer wins. Try again!");
+  }
+}
+
+function finishBlackjack(message) {
+  gameOver = true;
+
+  document.getElementById("blackjackResult").textContent =
+    message;
+
+  document.getElementById("hitButton").disabled = true;
+  document.getElementById("standButton").disabled = true;
+
+  updateCoins();
+}
+</script>
+
+</body>
+</html>
